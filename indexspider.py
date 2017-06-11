@@ -13,18 +13,18 @@ def get_html(url):
 def parse_index():
 	url = 'https://www.lagou.com/'
 	soup = BeautifulSoup(get_html(url), 'lxml')
-	all_menu = soup.find_all('div', class_='menu_sub')
+	all_positions = soup.select('div.menu_sub.dn > dl > dd > a')
 	datas = []
-	for each in all_menu:
-		allurl = each.select('dl > dd > a')
-		joburls = [i['href'] for i in allurl]
-		jobnames = [i.get_text() for i in allurl]
+	joburls = [i['href'] for i in all_positions]
+	jobnames = [i.get_text() for i in all_positions]
 
-		for joburl, jobname in zip(joburls, jobnames):
-			data = {
-				'url' : joburl,
-				'name' : jobname
-			}
-			datas.append(data)
+	for joburl, jobname in zip(joburls, jobnames):
+		data = {
+			'url' : joburl,
+			'name' : jobname
+		}
+		datas.append(data)
+	print(datas)
 	return datas
 
+parse_index()
