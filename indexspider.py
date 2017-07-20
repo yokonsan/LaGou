@@ -20,7 +20,6 @@ def parse_index():
     url = 'https://www.lagou.com/'
     soup = BeautifulSoup(get_html(url), 'lxml')
     all_positions = soup.select('div.menu_sub.dn > dl > dd > a')
-    datas = []
     joburls = [i['href'] for i in all_positions]
     jobnames = [i.get_text() for i in all_positions]
 
@@ -29,5 +28,4 @@ def parse_index():
             'url' : joburl,
             'name' : jobname
         }
-        datas.append(data)
-    return datas
+    yield data
