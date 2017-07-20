@@ -14,9 +14,11 @@ headers  = {
     'Connection':'keep-alive'
 }
 loginData={
-    'username' : USERNAME,
-    'password' : PASSWORD,
-    'userlogin' : "true",
+    'isValidate':'true'
+    'username': USERNAME
+    'password': PASSWORD  # 注意这里的密码是编码的
+    'request_form_verifyCode': ''
+    'submit': ''
 }
 s = requests.Session()
 login_url = 'https://passport.lagou.com/login/login.html?ts=1497162442867&serviceId=lagou&service=https%253A%252F%252Fwww.lagou.com%252F&action=login&signature=72A4603E1EEBEAFA295397B4E53ED7D9'
