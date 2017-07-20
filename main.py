@@ -1,25 +1,28 @@
 # -*- coding:utf-8 -*-
 #  author: yukun
 import time
-from config import MONGO_TABLE
 from multiprocessing import Pool
 from spider import parse_link
 from indexspider import parse_index
 
+def main(pages):
+    datas = parse_index()
+    for i in datas:
+        url = i['url']
+        print(url)
+        mongo_table = i['name']
+        if mongo_table[0] == '.':
+            mongo_table = mongo_table[1:]
+        parse_link(url, pages, mongo_table)
 
-def get_alllink_data():
-    for i in parse_index():
-        if i['name'] == MONGO_TABLE:
-            url = i['url']
-            print(url)
-            for i in range(1, 31):
-                parse_link(url, i)
 
 if __name__ == '__main__':
     t1 = time.time()
 
     pool = Pool(processes=4)
-    pool.apply_async(get_alllink_data)
+
+    pages = ([p for p in range(1, 31)])
+    pool.map(main, pages)
     pool.close()
     pool.join()
 
