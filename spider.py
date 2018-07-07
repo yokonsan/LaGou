@@ -14,38 +14,39 @@ headers  = {
 }
 
 
-def parse_link(url, pages, MONGO_TABLE):
-    link = '{}{}/?filterOption=3'.format(url, str(pages))
-    resp = requests.get(link, headers=headers)
-    if resp.status_code == 404:
-        pass
-    else:
-        soup = BeautifulSoup(resp.text, 'lxml')
+def parse_link(url, MONGO_TABLE):
+    for page in range(1, 31):
+        link = '{}{}/?filterOption=3'.format(url, str(page))
+        resp = requests.get(link, headers=headers)
+        if resp.status_code == 404:
+            pass
+        else:
+            soup = BeautifulSoup(resp.text, 'lxml')
 
-        positions = soup.select('ul > li > div.list_item_top > div.position > div.p_top > a > h3')
-        adds = soup.select('ul > li > div.list_item_top > div.position > div.p_top > a > span > em')
-        publishs = soup.select('ul > li > div.list_item_top > div.position > div.p_top > span')
-        moneys = soup.select('ul > li > div.list_item_top > div.position > div.p_bot > div > span')
-        needs = soup.select('ul > li > div.list_item_top > div.position > div.p_bot > div')
-        companys = soup.select('ul > li > div.list_item_top > div.company > div.company_name > a')
-        tags = []
-        if soup.find('div', class_='li_b_l'):
-            tags = soup.select('ul > li > div.list_item_bot > div.li_b_l')
-        fulis = soup.select('ul > li > div.list_item_bot > div.li_b_r')
+            positions = soup.select('ul > li > div.list_item_top > div.position > div.p_top > a > h3')
+            adds = soup.select('ul > li > div.list_item_top > div.position > div.p_top > a > span > em')
+            publishs = soup.select('ul > li > div.list_item_top > div.position > div.p_top > span')
+            moneys = soup.select('ul > li > div.list_item_top > div.position > div.p_bot > div > span')
+            needs = soup.select('ul > li > div.list_item_top > div.position > div.p_bot > div')
+            companys = soup.select('ul > li > div.list_item_top > div.company > div.company_name > a')
+            tags = []
+            if soup.find('div', class_='li_b_l'):
+                tags = soup.select('ul > li > div.list_item_bot > div.li_b_l')
+            fulis = soup.select('ul > li > div.list_item_bot > div.li_b_r')
 
-        for position,add,publish,money,need,company,tag,fuli in \
-                zip(positions,adds,publishs,moneys,needs,companys,tags,fulis):
-            data = {
-                'position' : position.get_text(),
-                'add' : add.get_text(),
-                'publish' : publish.get_text(),
-                'money' : money.get_text(),
-                'need' : need.get_text().split('\n')[2],
-                'company' : company.get_text(),
-                'tag' : tag.get_text().replace('\n','-'),
-                'fuli' : fuli.get_text()
-            }
-            save_database(data, MONGO_TABLE)
+            for position,add,publish,money,need,company,tag,fuli in \
+					zip(positions,adds,publishs,moneys,needs,companys,tags,fulis):
+                data = {
+                    'position' : position.get_text(),
+                    'add' : add.get_text(),
+                    'publish' : publish.get_text(),
+                    'money' : money.get_text(),
+                    'need' : need.get_text().split('\n')[2],
+                    'company' : company.get_text(),
+                    'tag' : tag.get_text().replace('\n','-'),
+                    'fuli' : fuli.get_text()
+                }
+                save_database(data, MONGO_TABLE)
 
 def save_database(data, MONGO_TABLE):
     if db[MONGO_TABLE].insert_one(data):

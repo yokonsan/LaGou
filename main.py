@@ -5,15 +5,13 @@ from multiprocessing import Pool
 from spider import parse_link
 from indexspider import parse_index
 
-def main(pages):
-    datas = parse_index()
-    for i in datas:
-        url = i['url']
-        print(url)
-        mongo_table = i['name']
-        if mongo_table[0] == '.':
-            mongo_table = mongo_table[1:]
-        parse_link(url, pages, mongo_table)
+def main(data):
+    url = data['url']
+    print(url)
+    mongo_table = data['name']
+    if mongo_table[0] == '.':
+        mongo_table = mongo_table[1:]
+    parse_link(url, mongo_table)
 
 
 if __name__ == '__main__':
@@ -21,8 +19,8 @@ if __name__ == '__main__':
 
     pool = Pool(processes=4)
 
-    pages = ([p for p in range(1, 31)])
-    pool.map(main, pages)
+    datas = (data for data in parse_index())
+    pool.map(main, datas)
     pool.close()
     pool.join()
 

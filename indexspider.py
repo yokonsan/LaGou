@@ -28,4 +28,4 @@ def parse_index():
             'url' : joburl,
             'name' : jobname
         }
-    yield data
+        yield data
